@@ -82,16 +82,15 @@ section h3 {
   border: 1px solid #cfd8dc;
 }
 
-/* make this a bulleted list and improve spacing */
+/* hide bullets and improve spacing */
 .participants-list {
-  list-style: disc;
-  list-style-position: outside;
-  padding-left: 24px;
+  list-style: none;
+  padding-left: 0;
   margin-top: 10px;
   display: block;
 }
 
-/* keep the compact card look for each participant while preserving bullets */
+/* keep the compact card look for each participant and add delete button */
 .participants-list li {
   display: flex;
   align-items: center;
@@ -102,6 +101,20 @@ section h3 {
   border: 1px solid #e6eef8;
   box-shadow: 0 1px 0 rgba(0,0,0,0.02);
   margin-bottom: 8px;
+}
+
+.delete-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #c62828;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+}
+.delete-btn:hover {
+  background-color: rgba(198,40,40,0.08);
 }
 
 .participants-section strong {

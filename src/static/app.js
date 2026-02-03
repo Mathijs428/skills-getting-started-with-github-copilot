@@ -36,39 +36,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        // Create participants list HTML (with avatars)
-        let participantsHTML = "";
-        if (details.participants.length > 0) {
-          // sort participants for consistent display
-          const items = details.participants
-            .slice()
-            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
-            .map(p => `<li><span class="avatar">${getInitials(p)}</span><span class="participant-email">${escapeHTML(p)}</span></li>`)
-            .join("");
-          participantsHTML = `
-            <div class="participants-section">
-              <strong>Participants (${details.participants.length}):</strong>
-              <ul class="participants-list">
-                ${items}
-              </ul>
-            </div>
-          `;
-        } else {
-          participantsHTML = `
-            <div class="participants-section">
-              <strong>Participants (0):</strong>
-              <p class="no-participants">No participants yet</p>
-            </div>
-          `;
-        }
-
+        // Create participants section (with avatars and delete buttons)
         activityCard.innerHTML = `
           <h4>${escapeHTML(name)}</h4>
           <p>${escapeHTML(details.description)}</p>
           <p><strong>Schedule:</strong> ${escapeHTML(details.schedule)}</p>
           <p class="availability ${spotsLeft === 0 ? "full" : ""}"><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          ${participantsHTML}
         `;
+
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+
+        const participantsTitle = document.createElement("strong");
+        participantsTitle.textContent = `Participants (${details.participants.length}):`;
+        participantsSection.appendChild(participantsTitle);
+
+        if (details.participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          details.participants
+            .slice()
+            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+            .forEach(p => {
+              const li = document.createElement("li");
+
+              const avatar = document.createElement("span");
+              avatar.className = "avatar";
+              avatar.textContent = getInitials(p);
+
+              const emailSpan = document.createElement("span");
+              emailSpan.className = "participant-email";
+              emailSpan.textContent = p;
+
+              const deleteBtn = document.createElement("button");
+              deleteBtn.className = "delete-btn";
+              deleteBtn.title = "Unregister";
+              deleteBtn.textContent = "🗑️";
+
+              deleteBtn.addEventListener("click", async () => {
+                try {
+                  const response = await fetch(`/activities/${encodeURIComponent(name)}/unregister?email=${encodeURIComponent(p)}`, { method: "DELETE" });
+                  const result = await response.json();
+                  if (response.ok) {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = "success";
+                    messageDiv.classList.remove("hidden");
+                    fetchActivities();
+                  } else {
+                    messageDiv.textContent = result.detail || "An error occurred";
+                    messageDiv.className = "error";
+                    messageDiv.classList.remove("hidden");
+                  }
+                  setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+                } catch (error) {
+                  messageDiv.textContent = "Failed to unregister. Please try again.";
+                  messageDiv.className = "error";
+                  messageDiv.classList.remove("hidden");
+                  console.error("Error unregistering:", error);
+                }
+              });
+
+              li.appendChild(avatar);
+              li.appendChild(emailSpan);
+              li.appendChild(deleteBtn);
+              ul.appendChild(li);
+            });
+
+          participantsSection.appendChild(ul);
+        } else {
+          const pNo = document.createElement("p");
+          pNo.className = "no-participants";
+          pNo.textContent = "No participants yet";
+          participantsSection.appendChild(pNo);
+        }
+
+        activityCard.appendChild(participantsSection);
 
         activitiesList.appendChild(activityCard);
 
@@ -105,6 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh the activities list so the new participant appears without a page reload
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
