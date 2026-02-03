@@ -77,6 +77,45 @@ activities = {
         "schedule": "Wednesdays, 4:00 PM - 5:00 PM",
         "max_participants": 10,
         "participants": []
+    },
+    # More Sports activities
+    "Tennis Team": {
+        "description": "Learn tennis techniques and participate in matches",
+        "schedule": "Mondays and Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 12,
+        "participants": []
+    },
+    "Swimming Club": {
+        "description": "Improve swimming skills and train for competitions",
+        "schedule": "Tuesdays and Thursdays, 5:00 PM - 6:00 PM",
+        "max_participants": 25,
+        "participants": []
+    },
+    # More Artistic activities
+    "Music Band": {
+        "description": "Play musical instruments and perform in school events",
+        "schedule": "Mondays and Thursdays, 3:30 PM - 4:30 PM",
+        "max_participants": 30,
+        "participants": []
+    },
+    "Photography Club": {
+        "description": "Learn photography techniques and explore digital imaging",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": []
+    },
+    # More Intellectual activities
+    "Science Club": {
+        "description": "Conduct experiments and explore scientific discoveries",
+        "schedule": "Wednesdays, 3:30 PM - 4:30 PM",
+        "max_participants": 18,
+        "participants": []
+    },
+    "Model United Nations": {
+        "description": "Represent countries and debate global issues",
+        "schedule": "Tuesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 25,
+        "participants": []
     }
 }
 
