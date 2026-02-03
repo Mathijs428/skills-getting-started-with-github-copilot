@@ -4,14 +4,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Helper to avoid HTML injection
+  function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, (s) => {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[s];
+    });
+  }
+
+  // Small initials generator for avatars (based on local-part of email)
+  function getInitials(email) {
+    const local = String(email).split("@")[0] || "";
+    const parts = local.split(/[\.\-_]+/).filter(Boolean);
+    const initials = parts.length ? (parts[0][0] || "") + (parts[1] ? parts[1][0] : "") : (local[0] || "");
+    return initials.toUpperCase().slice(0, 2);
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Clear loading message and dropdown
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -20,34 +36,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-
-          // Create participants list HTML
-          let participantsHTML = "";
-          if (details.participants.length > 0) {
-            participantsHTML = `
-              <div class="participants-section">
-                <strong>Participants:</strong>
-                <ul class="participants-list">
-                  ${details.participants.map(p => `<li>${p}</li>`).join("")}
-                </ul>
-              </div>
-            `;
-          } else {
-            participantsHTML = `
-              <div class="participants-section">
-                <strong>Participants:</strong>
-                <p class="no-participants">No participants yet</p>
-              </div>
-            `;
-          }
-
-          activityCard.innerHTML = `
-            <h4>${name}</h4>
-            <p>${details.description}</p>
-            <p><strong>Schedule:</strong> ${details.schedule}</p>
-            <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-            ${participantsHTML}
+        // Create participants list HTML (with avatars)
+        let participantsHTML = "";
+        if (details.participants.length > 0) {
+          const items = details.participants
+            .map(p => `<li><span class="avatar">${getInitials(p)}</span><span class="participant-email">${escapeHTML(p)}</span></li>`)
+            .join("");
+          participantsHTML = `
+            <div class="participants-section">
+              <strong>Participants (${details.participants.length}):</strong>
+              <ul class="participants-list">
+                ${items}
+              </ul>
+            </div>
           `;
+        } else {
+          participantsHTML = `
+            <div class="participants-section">
+              <strong>Participants (0):</strong>
+              <p class="no-participants">No participants yet</p>
+            </div>
+          `;
+        }
+
+        activityCard.innerHTML = `
+          <h4>${escapeHTML(name)}</h4>
+          <p>${escapeHTML(details.description)}</p>
+          <p><strong>Schedule:</strong> ${escapeHTML(details.schedule)}</p>
+          <p class="availability ${spotsLeft === 0 ? "full" : ""}"><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          ${participantsHTML}
+        `;
 
         activitiesList.appendChild(activityCard);
 
