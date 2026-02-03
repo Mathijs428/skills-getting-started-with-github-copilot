@@ -39,7 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Create participants list HTML (with avatars)
         let participantsHTML = "";
         if (details.participants.length > 0) {
+          // sort participants for consistent display
           const items = details.participants
+            .slice()
+            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
             .map(p => `<li><span class="avatar">${getInitials(p)}</span><span class="participant-email">${escapeHTML(p)}</span></li>`)
             .join("");
           participantsHTML = `

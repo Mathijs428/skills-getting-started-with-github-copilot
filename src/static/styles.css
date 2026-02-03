@@ -82,21 +82,16 @@ section h3 {
   border: 1px solid #cfd8dc;
 }
 
-.participants-section strong {
-  color: #1a237e;
-  display: block;
-  margin-bottom: 6px;
-}
-
+/* make this a bulleted list and improve spacing */
 .participants-list {
-  list-style: none;
-  padding-left: 0;
+  list-style: disc;
+  list-style-position: outside;
+  padding-left: 24px;
   margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: block;
 }
 
+/* keep the compact card look for each participant while preserving bullets */
 .participants-list li {
   display: flex;
   align-items: center;
@@ -106,6 +101,13 @@ section h3 {
   border-radius: 6px;
   border: 1px solid #e6eef8;
   box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  margin-bottom: 8px;
+}
+
+.participants-section strong {
+  color: #1a237e;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .avatar {
@@ -199,5 +201,11 @@ footer {
   text-align: center;
   margin-top: 30px;
   padding: 20px;
+  color: #666;
+}
+
+/* subtle styling for the empty-state text */
+.no-participants {
+  font-style: italic;
   color: #666;
 }
